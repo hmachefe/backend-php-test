@@ -20,6 +20,14 @@
           <ul class="nav navbar-nav">
             <li><a href="/todo">Todo list</a></li>
           </ul>
+          <div class="nav navbar-nav">
+            {% set flashbag_notices = app.session.flashbag.get('notice') %}
+            {% if flashbag_notices is not empty %}
+            {% for notice in flashbag_notices %}
+              {{ notice }}
+            {% endfor %}
+            {% endif %}
+          </div>
           <ul class="nav navbar-nav navbar-right">
             {% if user %}
               <li><a href="/logout"><span class="glyphicon glyphicon-user"></span> {{ user.username }} Logout</a></li>
