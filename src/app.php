@@ -9,6 +9,7 @@ use Silex\Provider\ServiceControllerServiceProvider;
 use Silex\Provider\HttpFragmentServiceProvider;
 use Silex\Provider\DoctrineServiceProvider;
 use DerAlex\Silex\YamlConfigServiceProvider;
+use FranMoreno\Silex\Provider\PagerfantaServiceProvider;
 
 $app = new Application();
 $app->register(new SessionServiceProvider());
@@ -29,5 +30,12 @@ $app->register(new DoctrineServiceProvider, array(
         'charset'   => 'utf8',
     ),
 ));
+
+$app->register(new PagerfantaServiceProvider());
+$app['pagerfanta.view.options'] = array(
+    'next_message'  => ' next &raquo;',
+    'previous_message'  => '&laquo; previous ',
+);
+
 
 return $app;
