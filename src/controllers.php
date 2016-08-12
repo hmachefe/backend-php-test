@@ -118,9 +118,12 @@ $app->post('/todo/add', function (Request $request) use ($app) {
 
 $app->match('/todo/delete/{id}', function ($id) use ($app) {
 
+    $sql = "SELECT * FROM todos WHERE id = '$id'";
+    $todo = $app['db']->fetchAssoc($sql);
+    $description = $todo["description"];
     $sql = "DELETE FROM todos WHERE id = '$id'";
     $app['db']->executeUpdate($sql);
     error_log('flash bag...');
-    $app['session']->getFlashBag()->add('notice', 'description deleted');
+    $app['session']->getFlashBag()->add('notice', $description);
     return $app->redirect('/todo');
 });
