@@ -31,6 +31,13 @@ $app->register(new DoctrineServiceProvider, array(
     ),
 ));
 
+$app['debug'] = true;
+
+/* user (and TODO description) abstraction */
+$app['dao.user'] = $app->share(function ($app) {
+    return new UserDao($app['db']);
+});
+
 $app->register(new PagerfantaServiceProvider());
 $app['pagerfanta.view.options'] = array(
     'next_message'  => ' next &raquo;',
