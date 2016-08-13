@@ -19,6 +19,19 @@
                         <button type="submit" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-remove glyphicon-white"></span></button>
                     </form>
                 </td>
+                <td>
+                    <form method="post" action="{{ app.request.baseurl }}/todo/complete/{{ result.id }}">
+                        <button type="submit" class="btn btn-xs
+                    {% if not result.completed %}
+                        btn-default
+                    {% else %}
+                       btn-success
+                    {% endif %}
+                        confirm-default">
+                        <span class="glyphicon glyphicon-ok glyphicon-white"></span>
+                        </button>
+                    </form>
+                </td>
             </tr>
         {% endfor %}
         <tr>
