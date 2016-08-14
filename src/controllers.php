@@ -104,6 +104,7 @@ $app->match('/todo/delete/{id}', function ($id) use ($app) {
 
     $sql = "DELETE FROM todos WHERE id = '$id'";
     $app['db']->executeUpdate($sql);
-
+    error_log('flash bag...');
+    $app['session']->getFlashBag()->add('notice', 'description deleted');
     return $app->redirect('/todo');
 });
