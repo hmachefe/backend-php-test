@@ -77,7 +77,6 @@ $app->get('/todo/{id}', function ($id, Request $request) use ($app) {
 
 
 $app->get('/todo/{id}/json', function ($id) use ($app) {
-
     $user = $app['session']->get('user');
 
     if ($id){
@@ -127,6 +126,12 @@ $app->match('/todo/delete/{id}', function ($id) use ($app) {
     $app['session']->getFlashBag()->add('textBeforeDescription', $ERASING_PREVIOUS_DESCRIPTION_START_TEXT);
     $app['session']->getFlashBag()->add('description', $description);
     $app['session']->getFlashBag()->add('textAfterDescription', $ERASING_PREVIOUS_DESCRIPTION_END_TEXT);
+
+    return $app->redirect('/todo');
+});
+
+$app->match('/todo/complete/{id}', function ($id) use ($app) {
+    $app['dao.user']->markDescriptionAsCompleted($id);
 
     return $app->redirect('/todo');
 });
