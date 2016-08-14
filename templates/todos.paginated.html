@@ -32,6 +32,11 @@
                         </button>
                     </form>
                 </td>
+                <td>
+                    <form method="get" action="{{ app.request.baseurl }}/todo/{{ result.id }}/json">
+                        <button class="icon-json"></button>
+                    </form>
+                </td>
             </tr>
         {% endfor %}
         <tr>
