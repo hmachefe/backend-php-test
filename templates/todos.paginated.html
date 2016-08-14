@@ -5,17 +5,17 @@
     <h1>Todo List:</h1>
     <table class="table table-striped">
         <th>#</th><th>User</th><th>Description</th><th></th>
-        {% for todo in todos %}
+        {% for result in pager %}
             <tr>
-                <td>{{ todo.id }}</td>
-                <td>{{ todo.user_id }}</td>
+                <td>{{ result.id }}</td>
+                <td>{{ result.user_id }}</td>
                 <td>
-                    <a href="{{ app.request.baseurl }}/todo/{{ todo.id }}">
-                       {{ todo.description }}
+                    <a href="{{ app.request.baseurl }}/todo/{{ result.id }}">
+                       {{ result.description }}
                     </a>
                 </td>
                 <td>
-                    <form method="post" action="{{ app.request.baseurl }}/todo/delete/{{ todo.id }}">
+                    <form method="post" action="{{ app.request.baseurl }}/todo/delete/{{ result.id }}">
                         <button type="submit" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-remove glyphicon-white"></span></button>
                     </form>
                 </td>
@@ -32,5 +32,8 @@
             </form>
         </tr>
     </table>
+    <div class="pagination">
+        {{ pagerfanta(pager)|raw }}
+    </div>
 </div>
 {% endblock %}
