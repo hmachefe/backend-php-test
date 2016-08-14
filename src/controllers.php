@@ -73,9 +73,13 @@ $app->post('/todo/add', function (Request $request) use ($app) {
     $user_id = $user['id'];
     $description = $request->get('description');
 
+    if ($description != '' && (strlen(trim($description)) != 0)) {
     $sql = "INSERT INTO todos (user_id, description) VALUES ('$user_id', '$description')";
     $app['db']->executeUpdate($sql);
-
+    } else {
+        // #TODO warn users that empty strings are not allowed
+        error_log('empty description is not granted. Please fill in with relevant content');
+    }
     return $app->redirect('/todo');
 });
 
