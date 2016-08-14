@@ -27,8 +27,7 @@ $app->match('/login', function (Request $request) use ($app) {
     $password = $request->get('password');
 
     if ($username) {
-        $sql = "SELECT * FROM users WHERE username = '$username' and password = '$password'";
-        $user = $app['db']->fetchAssoc($sql);
+        $user = $app['dao.user']->findUser($username, $password);
 
         if ($user){
             $app['session']->set('user', $user);
@@ -52,15 +51,13 @@ $app->get('/todo/{id}', function ($id, Request $request) use ($app) {
     }
 
     if ($id){
-        $sql = "SELECT * FROM todos WHERE id = '$id'";
-        $todo = $app['db']->fetchAssoc($sql);
+        $todo = $app['dao.user']->findDescriptionById($id);
 
         return $app['twig']->render('todo.html', [
             'todo' => $todo,
         ]);
     } else {
-        $sql = "SELECT * FROM todos WHERE user_id = '${user['id']}'";
-        $todos = $app['db']->fetchAll($sql);
+        $todos = $app['dao.user']->findDescriptionByUser($user);
 
         $adapter = new ArrayAdapter($todos);
         $pagerfanta = new Pagerfanta($adapter);
@@ -81,17 +78,16 @@ $app->get('/todo/{id}/json', function ($id) use ($app) {
     $user = $app['session']->get('user');
 
     if ($id){
-        $sql = "SELECT * FROM todos WHERE id = '$id'";
-        $todo = $app['db']->fetchAssoc($sql);
 
-          $jsonData = json_encode($todo);
+        $todo = $app['dao.user']->findDescriptionById($id);
+        $jsonData = json_encode($todo);
 
-          $headers = array(
-                'Content-Type' => 'application/json'
-          );
+        $headers = array(
+            'Content-Type' => 'application/json'
+        );
 
-          $response = new Response($jsonData, 200, $headers);
-          return $response;
+        $response = new Response($jsonData, 200, $headers);
+        return $response;
     }
 })
 ->value('id', null);
@@ -105,8 +101,7 @@ $app->post('/todo/add', function (Request $request) use ($app) {
     $user_id = $user['id'];
     $description = $request->get('description');
     if ($description != '' && (strlen(trim($description)) != 0)) {
-    $sql = "INSERT INTO todos (user_id, description) VALUES ('$user_id', '$description')";
-    $app['db']->executeUpdate($sql);
+        $todos = $app['dao.user']->addDescription($user_id, $description);
     } else {
         // #TODO warn users that empty strings are not allowed
         error_log('empty description is not granted. Please fill in with relevant content');
@@ -118,11 +113,8 @@ $app->post('/todo/add', function (Request $request) use ($app) {
 
 $app->match('/todo/delete/{id}', function ($id) use ($app) {
 
-    $sql = "SELECT * FROM todos WHERE id = '$id'";
-    $todo = $app['db']->fetchAssoc($sql);
-    $description = $todo["description"];
-    $sql = "DELETE FROM todos WHERE id = '$id'";
-    $app['db']->executeUpdate($sql);
+    $description = $app['dao.user']->getDescription($id);
+    $app['dao.user']->deleteDescription($id);
     error_log('flash bag...');
     $app['session']->getFlashBag()->add('notice', $description);
     return $app->redirect('/todo');
