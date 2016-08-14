@@ -1,9 +1,10 @@
 $(document).ready(function(){
-	var flashbagDiv = $("div.flashbag");
-	var deletedDescription = flashbagDiv.text();
-	deletedDescription = deletedDescription && deletedDescription.trim();
-	if (deletedDescription.length === 0) {
-		flashbagDiv.text("please fill in description without any more empty text");
+	var flashbagDescriptionDiv = $("div.flashbag");
+	var deletedDescriptionText = flashbagDescriptionDiv.text();
+
+	deletedDescriptionText = deletedDescriptionText && deletedDescriptionText.trim();
+	if (deletedDescriptionText.length === 0) {
+		return flashbagDescriptionDiv.fadeOut(0);
 	}
-	flashbagDiv.fadeOut(2000);
+	flashbagDescriptionDiv.fadeOut(2300);
 });
