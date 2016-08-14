@@ -103,7 +103,7 @@ $app->post('/todo/add', function (Request $request) use ($app) {
     $user_id = $user['id'];
     $description = $request->get('description');
     if ($description != '' && (strlen(trim($description)) != 0)) {
-        $todos = $app['dao.user']->addDescription($user_id, $description, 0);
+        $todos = $app['dao.user']->addDescription($user_id, $description);
         $app['session']->getFlashBag()->add('textBeforeDescription', $INSERTING_NEW_DESCRIPTION_START_TEXT);
         $app['session']->getFlashBag()->add('description', $description);
         $app['session']->getFlashBag()->add('textAfterDescription', $INSERTING_NEW_DESCRIPTION_END_TEXT);

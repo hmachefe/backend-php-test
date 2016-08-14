@@ -57,9 +57,9 @@ class UserDao
 	    $this->getDb()->executeUpdate($sql);
 	}
 
-	public function addDescription($user_id, $description, $completed)
+	public function addDescription($user_id, $description)
 	{
-	    $sql = "INSERT INTO todos (user_id, description, completed) VALUES ('$user_id', '$description', '$completed')";
+	    $sql = "INSERT INTO todos (user_id, description) VALUES ('$user_id', '$description')";
 	    $this->getDb()->executeUpdate($sql);
 	}
 
