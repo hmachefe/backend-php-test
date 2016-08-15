@@ -2,7 +2,12 @@
 
 use Doctrine\DBAL\Connection;
 
-/* main class wrapping users and descriptions into SQL requests */
+/****************************************************************************/
+/*   			  					ORM 									*/
+/* 	main class wrapping requests for users, descriptions from controller 	*/
+/*  into "raw" SQL commands (as an abstraction).							*/
+/****************************************************************************/
+
 class UserDao
 {
 	private $db;
@@ -89,6 +94,7 @@ class UserDao
 
 	public function addDescription($user_id, $description, $completed)
 	{
+        // #TODO: avoid entering same description twice (or more)
 	    $sql = "INSERT INTO todos (user_id, description, completed) VALUES ('$user_id', '$description', '$completed')";
         try {
         	$this->getDb()->executeUpdate($sql);

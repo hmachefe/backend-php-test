@@ -10,6 +10,7 @@ body {
  	margin-left: -38px;
 }
 
+/* #TODO: find a better way to place JSON icon without breaking graphic design anymore */
 .icon-json {
     background-image: url('../img/json.png');
     width: 38px;

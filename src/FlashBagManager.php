@@ -1,12 +1,13 @@
 <?php
 
 use Silex\Application;
-use FranMoreno\Silex\Twig\PagerfantaExtension;
-use Pagerfanta\Pagerfanta;
-use Pagerfanta\Adapter\ArrayAdapter;
 
+/****************************************************************************/
+/*   			  				FLASHBAG Helper 							*/
+/* 	main class wrapping flashbag requests from controller 					*/
+/*  into "raw" flashbag commands (as an abstraction).						*/
+/****************************************************************************/
 
-/* main class wrapping and arranging flashbag requests */
 class FlashBagManager
 {
 	// #TODO: move these constants elsewhere in a dedicated global area */

@@ -65,6 +65,7 @@ $app->get('/todo/{id}', function ($id, Request $request) use ($app) {
         ]);
     } else {
         $todos = $app['dao.user']->findDescriptionByUser($user);
+        // #TODO: maintain displaying flashBag in case pagination happens...
         $adapter = new ArrayAdapter($todos);
         $pagerfanta = new Pagerfanta($adapter);
         $pagerfanta->setMaxPerPage(10);
