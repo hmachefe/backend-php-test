@@ -31,9 +31,14 @@ $app->register(new DoctrineServiceProvider, array(
     ),
 ));
 
-/* user (and TODO description) abstraction */
+/* user (and description) abstraction layer to hide "native SQL" requests */
 $app['dao.user'] = $app->share(function ($app) {
     return new UserDao($app['db']);
+});
+
+/* flashbag abstraction layer to highlight description insertion/deletion */
+$app['flashbag.manager'] = $app->share(function ($app) {
+    return new FlashBagManager($app);
 });
 
 $app->register(new PagerfantaServiceProvider());

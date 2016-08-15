@@ -7,12 +7,14 @@ use FranMoreno\Silex\Twig\PagerfantaExtension;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\Adapter\ArrayAdapter;
 
-$ERROR_ENTERING_EMPTY_DESCRIPTION_LOG = "empty description is not granted. Please fill in with relevant content";
-$ERASING_PREVIOUS_DESCRIPTION_START_TEXT = "previous description: ";
-$ERASING_PREVIOUS_DESCRIPTION_END_TEXT = " has been deleted";
-$INSERTING_NEW_DESCRIPTION_START_TEXT = "new description: ";
-$INSERTING_NEW_DESCRIPTION_END_TEXT = " has been inserted";
+/**************************************/
+/*  main TODO application controller  */
+/**************************************/
 
+/* globals */
+$INSERT_DESCRIPTION = "add";
+$DELETE_DESCRIPTION = "remove";
+$ERROR_EMPTY_DESCRIPTION = "empty description is not granted. Please fill in with relevant content";
 
 $app['twig'] = $app->share($app->extend('twig', function($twig, $app) {
     $twig->addGlobal('user', $app['session']->get('user'));
@@ -29,6 +31,7 @@ $app->get('/', function () use ($app) {
 });
 
 
+/* route by which users come to log in to current application */
 $app->match('/login', function (Request $request) use ($app) {
     $username = $request->get('username');
     $password = $request->get('password');
@@ -43,13 +46,13 @@ $app->match('/login', function (Request $request) use ($app) {
     return $app['twig']->render('login.html', array());
 });
 
-
+/* route by which users come to log out current application */
 $app->get('/logout', function () use ($app) {
     $app['session']->set('user', null);
     return $app->redirect('/');
 });
 
-
+/* route by which descriptions are listed */
 $app->get('/todo/{id}', function ($id, Request $request) use ($app) {
     if (null === $user = $app['session']->get('user')) {
         return $app->redirect('/login');
@@ -75,7 +78,7 @@ $app->get('/todo/{id}', function ($id, Request $request) use ($app) {
 })
 ->value('id', null);
 
-
+/* route by which description is served in JSON format */
 $app->get('/todo/{id}/json', function ($id) use ($app) {
     $user = $app['session']->get('user');
 
@@ -91,11 +94,9 @@ $app->get('/todo/{id}/json', function ($id) use ($app) {
 })
 ->value('id', null);
 
-
+/* route by which a new description is added in the list */
 $app->post('/todo/add', function (Request $request) use ($app) {
-    global $INSERTING_NEW_DESCRIPTION_START_TEXT;
-    global $INSERTING_NEW_DESCRIPTION_END_TEXT;
-    global $ERROR_ENTERING_EMPTY_DESCRIPTION_LOG;
+    global $INSERT_DESCRIPTION, $DELETE_DESCRIPTION, $ERROR_EMPTY_DESCRIPTION;
     if (null === $user = $app['session']->get('user')) {
         return $app->redirect('/login');
     }
@@ -104,32 +105,25 @@ $app->post('/todo/add', function (Request $request) use ($app) {
     $description = $request->get('description');
     if ($description != '' && (strlen(trim($description)) != 0)) {
         $todos = $app['dao.user']->addDescription($user_id, $description, 0);
-        $app['session']->getFlashBag()->add('textBeforeDescription', $INSERTING_NEW_DESCRIPTION_START_TEXT);
-        $app['session']->getFlashBag()->add('description', $description);
-        $app['session']->getFlashBag()->add('textAfterDescription', $INSERTING_NEW_DESCRIPTION_END_TEXT);
     } else {
-        $app['session']->getFlashBag()->add('textBeforeDescription', 'please fill in description ');
-        $app['session']->getFlashBag()->add('textAfterDescription', ' without any more empty text');
-        error_log($ERROR_ENTERING_EMPTY_DESCRIPTION_LOG);
+        error_log($ERROR_EMPTY_DESCRIPTION);
     }
+    $app['flashbag.manager']->displayDescriptionWarning($INSERT_DESCRIPTION, $description);
 
     return $app->redirect('/todo');
 });
 
-
+/* route by which previous description is removed from the list */
 $app->match('/todo/delete/{id}', function ($id) use ($app) {
-    global $ERASING_PREVIOUS_DESCRIPTION_START_TEXT;
-    global $ERASING_PREVIOUS_DESCRIPTION_END_TEXT;
+    global $DELETE_DESCRIPTION;
     $description = $app['dao.user']->getDescription($id);
     $app['dao.user']->deleteDescription($id);
-    error_log('flash bag...');
-    $app['session']->getFlashBag()->add('textBeforeDescription', $ERASING_PREVIOUS_DESCRIPTION_START_TEXT);
-    $app['session']->getFlashBag()->add('description', $description);
-    $app['session']->getFlashBag()->add('textAfterDescription', $ERASING_PREVIOUS_DESCRIPTION_END_TEXT);
+    $app['flashbag.manager']->displayDescriptionWarning($DELETE_DESCRIPTION, $description);
 
     return $app->redirect('/todo');
 });
 
+/* route by which any description gets marked as done */
 $app->match('/todo/complete/{id}', function ($id) use ($app) {
     $app['dao.user']->markDescriptionAsCompleted($id);
 
